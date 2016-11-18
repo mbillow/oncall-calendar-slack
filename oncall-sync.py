@@ -7,14 +7,14 @@ slack_api_key = ""
 calendar_api = "https://www.googleapis.com/calendar/v3/calendars/g.rit.edu_61hmcjev3u2m4q98ooa5h1v5sk%40group." \
                "calendar.google.com/events?alwaysIncludeEmail=false&maxResults=1&orderBy=startTime&showDeleted=false" \
                "&singleEvents=true&timeMin={current_date}T00%3A00%3A00-00%3A00%3A00&fields=items" \
-               "(description%2Csummary)&key=<key_here>"
-opcomm_channel = "C0D9KMD7G"
+               "(description%2Csummary)&key="
+channel_id = "C0D9KMD7G"
 oncall_group = "S346MV9U4"
 
 
 def get_channel_topic(slack_instance, channel):
-    opcomm = slack_instance.channels.info(channel=channel)
-    current_topic = opcomm.body['channel']['topic']['value']
+    channel_info = slack_instance.channels.info(channel=channel)
+    current_topic = channel_info.body['channel']['topic']['value']
     return current_topic
 
 
@@ -51,10 +51,8 @@ if __name__ == "__main__":
     set_group_members(slack, oncall_group, [get_id_from_username(slack, username[1:])])
 
     # Get the current topic and replace the username.
-    topic = get_channel_topic(slack, opcomm_channel)
+    topic = get_channel_topic(slack, channel_id)
     topic_groups = re.match(pattern="(.*)(@\w*)(\*.*)",
                             string=topic).groups()
     updated_topic = topic_groups[0]+username+topic_groups[2]
-    set_channel_topic(slack, opcomm_channel, updated_topic)
-
-
+    set_channel_topic(slack, channel_id, updated_topic)
